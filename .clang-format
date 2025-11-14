@@ -1,0 +1,73 @@
+---
+BasedOnStyle: LLVM
+Language: Cpp
+IndentWidth: 4
+AccessModifierOffset: -4
+UseTab: false
+AlignAfterOpenBracket: Align
+AlignTrailingComments: true
+AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLambdasOnASingleLine: Empty
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: MultiLine
+AllowShortFunctionsOnASingleLine: Empty
+AlignConsecutiveAssignments: None
+AllowAllParametersOfDeclarationOnNextLine: true
+AlignConsecutiveDeclarations: false
+AlignConsecutiveMacros: Consecutive
+AlignArrayOfStructures: Left
+AlignOperands: Align
+ColumnLimit: 140
+BinPackArguments: false
+BinPackParameters: false
+BraceWrapping:
+  AfterCaseLabel: false
+  AfterStruct: false
+  AfterEnum: false
+  AfterClass: true
+  AfterNamespace: false
+  AfterUnion: false
+  AfterExternBlock: false
+  BeforeCatch: true
+  BeforeLambdaBody: false
+  BeforeWhile: false
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Attach
+BreakConstructorInitializers: BeforeColon
+BreakInheritanceList: AfterComma
+CompactNamespaces: false
+Cpp11BracedListStyle: false
+EmptyLineBeforeAccessModifier: Always
+FixNamespaceComments: true
+IndentAccessModifiers: false
+IndentCaseBlocks: false
+IndentCaseLabels: true
+IndentExternBlock: NoIndent
+IndentPPDirectives: None
+IndentGotoLabels: false
+IndentRequires: false
+MaxEmptyLinesToKeep: 1
+PackConstructorInitializers: Never
+QualifierAlignment: Left
+PointerAlignment: Left
+ReferenceAlignment: Left
+ReflowComments: true
+SortUsingDeclarations: Lexicographic
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
+SpaceBeforeCpp11BracedList: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+SpacesInAngles: Never
+SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: false
+IncludeBlocks: Preserve
+SortIncludes: CaseInsensitive
+NamespaceIndentation: All
