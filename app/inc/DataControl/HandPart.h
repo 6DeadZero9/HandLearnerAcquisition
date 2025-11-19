@@ -37,6 +37,10 @@ public:
         return name;
     }
 
+    const float get_angle() const {
+        return angle;
+    }
+
 private:
     const GUIData gui_data;
     const std::string name;

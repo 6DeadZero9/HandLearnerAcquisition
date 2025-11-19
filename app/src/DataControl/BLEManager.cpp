@@ -36,8 +36,8 @@ void BLEManager::initiate(const SimpleBLE::Adapter& given_adapter) {
 
 void BLEManager::setup_device_callbacks() {
     hand_learner.notify(SERVICE_UUID, CHARACTERISTIC_UUID, [&](SimpleBLE::ByteArray bytes) {
-        std::vector<uint8_t> converted_bytes(bytes);
-        DataContainer hand_learner_data = DataContainer::fromBytes(converted_bytes);
+        DataContainer hand_learner_data {};
+        std::memcpy(&hand_learner_data, bytes.data(), sizeof(DataContainer));
         HAND_INSTANCE.state_update(hand_learner_data);
     });
 

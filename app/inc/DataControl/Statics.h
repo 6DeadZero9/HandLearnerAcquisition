@@ -32,36 +32,21 @@ const std::array<uint16_t, 4> inputs = { MUX_IN_0, MUX_IN_1, MUX_IN_2, MUX_IN_3 
 
 /* Raylib config */
 
+#ifdef APPLICATION
 constexpr float GLOBAL_TEXT_SCALE { 0.005 };
 constexpr int HEADER_TEXT_SIZE { 15 };
 constexpr int RECTANGLE_POINTER_SIZE { 10 };
+#endif
 
 /* Shared data container */
 
+#pragma pack(push, 1)
 typedef struct DataContainer {
     float accel_x, accel_y, accel_z;
     float gyro_x, gyro_y, gyro_z;
     float imu_temp;
     uint16_t sensor_data[NUM_OF_SENS];
-
-    std::string print() {
-        std::stringstream ss;
-        ss << "Hand_learner status:"
-           << "\n\tAccelerometer x: " << accel_x << " y: " << accel_y << " z: " << accel_z << "\n\tGyro x: " << gyro_x << " y: " << gyro_y
-           << " z: " << gyro_z << "\n\tIMU temperature: " << imu_temp << "\n\tJoints status: ";
-        for (size_t step = 0; step < NUM_OF_SENS; step++) {
-            ss << "\n\t\tJoint " << step << ": " << sensor_data[step];
-        }
-        return ss.str();
-    }
-
-    static DataContainer fromBytes(const std::vector<uint8_t>& bytes) {
-        DataContainer data {};
-        if (bytes.size() < sizeof(DataContainer) || bytes.size() > sizeof(DataContainer)) return data;
-        std::memcpy(&data, bytes.data(), sizeof(DataContainer));
-        return data;
-    }
-
 } DataContainer;
+#pragma pack(pop)
 
 #endif /* STATICS_H_ */
