@@ -16,7 +16,7 @@ public:
     virtual ~Component() = default;
 
     virtual void update() {}
-    virtual void draw(int screen_width, int screen_height) = 0;
+    virtual void draw(int window_width, int window_height, float window_to_screen_ratio) = 0;
 };
 
 #endif /* COMPONENT_H_ */

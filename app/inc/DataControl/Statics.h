@@ -19,23 +19,53 @@ const std::string CHARACTERISTIC_UUID { "bdff2ec1-e826-4882-9d33-72a256993eff" }
 
 /* ESP32 defines */
 
+// Needed by both
+constexpr uint16_t NUM_OF_SENS { 32 };
+
+#ifndef APPLICATION
 constexpr uint16_t MUX_IN_0 { 4 };
 constexpr uint16_t MUX_IN_1 { 16 };
 constexpr uint16_t MUX_IN_2 { 17 };
 constexpr uint16_t MUX_IN_3 { 5 };
 constexpr uint16_t MUX_OUT_0 { 27 };
 constexpr uint16_t MUX_OUT_1 { 26 };
-constexpr uint16_t NUM_OF_SENS { 32 };
 constexpr uint16_t BUILTIN_LED { 2 };
 
 const std::array<uint16_t, 4> inputs = { MUX_IN_0, MUX_IN_1, MUX_IN_2, MUX_IN_3 };
+#endif
 
 /* Raylib config */
 
 #ifdef APPLICATION
-constexpr float GLOBAL_TEXT_SCALE { 0.005 };
-constexpr int HEADER_TEXT_SIZE { 15 };
-constexpr int RECTANGLE_POINTER_SIZE { 10 };
+constexpr int MIN_HEADER_TEXT_SIZE { 15 };
+constexpr int MAX_HEADER_TEXT_SIZE { 35 };
+
+// Arm Statistics box values
+
+constexpr int MIN_ARM_STATISTICS_TEXT_SIZE { 10 };
+constexpr int MAX_ARM_STATISTICS_TEXT_SIZE { 15 };
+
+constexpr int MIN_RECTANGLE_POINTER_SIZE { 10 };
+constexpr int MAX_RECTANGLE_POINTER_SIZE { 10 };
+
+constexpr int MIN_LINE_THICKNESS_SIZE { 1 };
+constexpr int MAX_LINE_THICKNESS_SIZE { 2 };
+
+constexpr float ARM_STATISTICS_X_OFFSET { 0.01f };
+constexpr float ARM_STATISTICS_Y_OFFSET { 0.02f };
+constexpr float ARM_STATISTICS_WIDTH_SCALE { 0.3f };
+constexpr float ARM_STATISTICS_HEIGHT_SCALE { 0.97f };
+
+constexpr float GENERAL_STATISTICS_X_TEST_POSITION_OFFSET { 0.05f };
+constexpr float GENERAL_STATISTICS_Y_TEST_POSITION_OFFSET { 0.05f };
+constexpr float GENERAL_STATISTICS_X_PADDING { 0.1f };
+constexpr float GENERAL_STATISTICS_Y_PADDING { 0.1f };
+
+constexpr float ARM_IMAGE_BOX_PADDING_SCALE { 0.01f };
+
+constexpr float ANGLE_TEXT_BOX_X_PADDING { 0.1f };
+constexpr float ANGLE_TEXT_BOX_Y_PADDING { 0.15f };
+
 #endif
 
 /* Shared data container */

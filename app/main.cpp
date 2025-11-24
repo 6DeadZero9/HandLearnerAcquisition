@@ -65,10 +65,10 @@ int main() {
     InitWindow(0, 0, "Hand Learner Visualization");
     SetTargetFPS(144);
 
-    int screen_width = GetScreenWidth();
-    int screen_height = GetScreenHeight();
+    int window_width = GetScreenWidth();
+    int window_height = GetScreenHeight();
 
-    SetWindowSize(screen_width / 2, screen_height / 2);
+    SetWindowSize(window_width / 2, window_height / 2);
 
     auto adapter_optional = tools::getAdapter();
 

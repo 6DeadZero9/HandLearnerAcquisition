@@ -3,10 +3,12 @@
 
 #include <App.h>
 #include <ArmStatistics.h>
+#include <Logger.h>
 #include <Statics.h>
 
 App::App() {
-    components.emplace_back(std::make_unique<ArmStatistics>(0.01f, 0.02f, 0.3f, 0.97f));
+    components.emplace_back(std::make_unique<ArmStatistics>(
+        ARM_STATISTICS_X_OFFSET, ARM_STATISTICS_Y_OFFSET, ARM_STATISTICS_WIDTH_SCALE, ARM_STATISTICS_HEIGHT_SCALE));
 
     register_key_callback(KEY_F, [this]() {
         if (!IsWindowFullscreen()) {
@@ -30,20 +32,24 @@ void App::poll_input() {
 }
 
 void App::update() {
-    int screen_width = GetScreenWidth();
-    int screen_height = GetScreenHeight();
+    const int current_screen = GetCurrentMonitor();
+    const int window_width = GetScreenWidth();
+    const int window_height = GetScreenHeight();
+    const int screen_width = GetMonitorWidth(current_screen);
+    const int screen_height = GetMonitorHeight(current_screen);
+    const float window_to_screen_ratio = (float)(window_width * window_height) / (float)(screen_width * screen_height);
 
     if (!IsWindowFullscreen()) {
-        previous_width = screen_width;
-        previous_height = screen_height;
+        previous_width = window_width;
+        previous_height = window_height;
     }
 
     ClearBackground(BLACK);
-    GuiSetStyle(DEFAULT, TEXT_SIZE, HEADER_TEXT_SIZE + GLOBAL_TEXT_SCALE * screen_width);
+    GuiSetStyle(DEFAULT, TEXT_SIZE, MIN_HEADER_TEXT_SIZE + MAX_HEADER_TEXT_SIZE * window_to_screen_ratio);
 
     poll_input();
 
     for (auto& component : components) {
-        component->draw(screen_width, screen_height);
+        component->draw(window_width, window_height, window_to_screen_ratio);
     }
 }
