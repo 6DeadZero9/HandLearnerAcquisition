@@ -63,7 +63,7 @@ void ArmStatistics::draw(int window_width, int window_height, float window_to_sc
                                        general_data_output_text_size.y };
 
     GuiGroupBox(arm_statistics_box, "Arm Statistics");
-    DrawTexturePro(arm_image, { 0, 0, arm_image.width, arm_image.height }, img_box, { 0, 0 }, 0, WHITE);
+    DrawTexturePro(arm_image, { 0, 0, (float)arm_image.width, (float)arm_image.height }, img_box, { 0, 0 }, 0, WHITE);
     DrawTextEx(font,
                general_data_output.str().c_str(),
                { general_statistics_box.x, general_statistics_box.y },

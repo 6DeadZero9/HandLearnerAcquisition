@@ -61,7 +61,7 @@ int main() {
     /* Raylib setup section */
 
     SetTraceLogLevel(LOG_WARNING);
-    SetConfigFlags(FLAG_WINDOW_HIGHDPI | FLAG_WINDOW_ALWAYS_RUN | FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
+    SetConfigFlags(FLAG_WINDOW_HIGHDPI | FLAG_WINDOW_ALWAYS_RUN | FLAG_WINDOW_RESIZABLE);
     InitWindow(0, 0, "Hand Learner Visualization");
     SetTargetFPS(144);
 
@@ -81,11 +81,8 @@ int main() {
     BLE_MANAGER_INSTANCE.find_hand_learner();
 
     while (!WindowShouldClose()) {
-        BeginDrawing();
-
+        APP_INSTANCE.poll_input();
         APP_INSTANCE.update();
-
-        EndDrawing();
     }
 
     CloseWindow();

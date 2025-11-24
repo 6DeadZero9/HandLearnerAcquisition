@@ -37,8 +37,18 @@ const std::array<uint16_t, 4> inputs = { MUX_IN_0, MUX_IN_1, MUX_IN_2, MUX_IN_3 
 /* Raylib config */
 
 #ifdef APPLICATION
+
+enum KeyState {
+    PRESSED,
+    DOWN
+};
+
 constexpr int MIN_HEADER_TEXT_SIZE { 15 };
 constexpr int MAX_HEADER_TEXT_SIZE { 35 };
+
+constexpr int BEFORE_ZOOM_SIZE { 100 };
+constexpr int ZOOM_SIZE { 400 };
+constexpr float ZOOM_SIZE_EXPANSION { 1.05f };
 
 // Arm Statistics box values
 
