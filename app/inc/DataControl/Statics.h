@@ -38,15 +38,12 @@ const std::array<uint16_t, 4> inputs = { MUX_IN_0, MUX_IN_1, MUX_IN_2, MUX_IN_3 
 
 #ifdef APPLICATION
 
-enum KeyState {
-    PRESSED,
-    DOWN
-};
+// Global app configuration
 
 constexpr int MIN_HEADER_TEXT_SIZE { 15 };
 constexpr int MAX_HEADER_TEXT_SIZE { 35 };
 
-constexpr int BEFORE_ZOOM_SIZE { 100 };
+constexpr int BEFORE_ZOOM_SIZE { 150 };
 constexpr int ZOOM_SIZE { 400 };
 constexpr float ZOOM_SIZE_EXPANSION { 1.05f };
 
@@ -75,6 +72,13 @@ constexpr float ARM_IMAGE_BOX_PADDING_SCALE { 0.01f };
 
 constexpr float ANGLE_TEXT_BOX_X_PADDING { 0.1f };
 constexpr float ANGLE_TEXT_BOX_Y_PADDING { 0.15f };
+
+// General config
+
+constexpr float LPF_SMOOTHING_SMALL { 0.15f };
+constexpr float LPF_SMOOTHING_LARGE { 0.65f };
+constexpr float LPF_CUTOFF_THRESHOLD { 0.1f };
+constexpr float LPF_ACTIVATION_THRESHOLD { 0.25f };
 
 #endif
 

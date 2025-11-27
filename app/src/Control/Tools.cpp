@@ -1,8 +1,10 @@
+#include <cmath>
 #include <cstring>
 #include <iostream>
 #include <stdarg.h>
 
 #include <Logger.h>
+#include <Statics.h>
 #include <Tools.h>
 
 namespace tools {
@@ -77,6 +79,14 @@ namespace tools {
     float map_range(float value, float min_in_range, float max_in_range, float min_out_range, float max_out_range) {
         float x = (value - min_in_range) / (max_in_range - min_in_range);
         return min_out_range + (max_out_range - min_out_range) * x;
+    }
+
+    float lpf(float raw_value, float processed_value) {
+        float delta = raw_value - processed_value;
+        float fabs_value = fabs(delta);
+
+        if (fabs_value < LPF_CUTOFF_THRESHOLD) return 0.0f;
+        return ((fabs_value < LPF_ACTIVATION_THRESHOLD) ? LPF_SMOOTHING_SMALL : LPF_SMOOTHING_LARGE) * delta;
     }
 
 } // namespace tools

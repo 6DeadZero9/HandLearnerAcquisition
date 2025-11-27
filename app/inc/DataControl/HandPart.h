@@ -2,7 +2,6 @@
 #define _HAND_PART_H_
 
 #include <cstdint>
-#include <mutex>
 #include <string>
 
 #include <raylib.h>
@@ -26,7 +25,7 @@ public:
     HandPart() = delete;
     ~HandPart() = default;
 
-    void update(DataContainer& container);
+    void update(const DataContainer& container);
     std::string print();
 
     const GUIData get_gui_data() const {
@@ -37,8 +36,8 @@ public:
         return name;
     }
 
-    const float get_angle() const {
-        return angle;
+    const float get_angle(bool processed = false) const {
+        return processed ? processed_angle : raw_angle;
     }
 
 private:
@@ -46,7 +45,7 @@ private:
     const std::string name;
     const uint8_t index;
     const bool inverted;
-    float angle;
+    float raw_angle, processed_angle = 0.0f;
 };
 
 #endif /* _HAND_PART_H_ */

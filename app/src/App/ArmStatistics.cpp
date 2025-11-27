@@ -31,7 +31,7 @@ void ArmStatistics::draw(int window_width, int window_height, float window_to_sc
     Rectangle arm_statistics_box { x * window_width, y * window_height, box_width, box_height };
     Rectangle img_box = arm_statistics_box;
 
-    GeneralHandLearnerData general_data = HAND_INSTANCE.get_general_data();
+    GeneralHandLearnerData general_data = HAND_INSTANCE.get_general_data(true);
 
     // --- Fit image ---
     if (image_ratio > target_ratio) {
@@ -79,7 +79,7 @@ void ArmStatistics::draw(int window_width, int window_height, float window_to_sc
 
     DrawRectangleLinesEx(general_statistics_box, line_thickness, outlines_color);
 
-    // --- Helper: format angle ---
+    // --- Helper: format raw_angle ---
     auto format_angle = [](float radians) {
         std::ostringstream ss;
         ss << std::fixed << std::setprecision(2) << radians * (180.0f / M_PI);
@@ -113,7 +113,7 @@ void ArmStatistics::draw(int window_width, int window_height, float window_to_sc
     for (const auto& hand_part : HAND_INSTANCE) {
         float rect_size = MIN_RECTANGLE_POINTER_SIZE + MAX_RECTANGLE_POINTER_SIZE * window_to_screen_ratio;
         GUIData gui = hand_part.get_gui_data();
-        std::string display_text = hand_part.get_name() + ": " + format_angle(hand_part.get_angle()) + "°";
+        std::string display_text = hand_part.get_name() + ": " + format_angle(hand_part.get_angle(true)) + "°";
         Vector2 text_size = MeasureTextEx(font, display_text.c_str(), statistics_text_size, 1);
 
         // --- Joint rectangle ---

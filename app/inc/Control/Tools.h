@@ -68,6 +68,15 @@ namespace tools {
      */
     float map_range(float value, float min_in_range, float max_in_range, float min_out_range, float max_out_range);
 
+    /**
+     * @brief Low pass filter
+     *
+     * @param raw_value
+     * @param processed_value
+     * @returns mapped value
+     */
+    float lpf(float raw_value, float processed_value);
+
 } // namespace tools
 
 #endif /* TOOLS_H_ */

@@ -3,6 +3,7 @@
 
 #include <array>
 #include <cstdint>
+#include <mutex>
 #include <utility>
 
 #include <raylib.h>
@@ -33,17 +34,20 @@ public:
     auto end() const {
         return hand_parts.end();
     }
-    GeneralHandLearnerData get_general_data() const {
-        return { accel_data, gyro_data, temp_data };
+    const GeneralHandLearnerData get_general_data(bool processed = false) const {
+        return processed ? processed_data : raw_data;
     }
 
 private:
-    Vector3 accel_data;
-    Vector3 gyro_data;
-    float temp_data;
+    GeneralHandLearnerData raw_data;
+    GeneralHandLearnerData processed_data {
+        (Vector3) { 0.0f, 0.0f, 0.0f },
+        (Vector3) { 0.0f, 0.0f, 0.0f },
+        0.0f,
+    };
 
     std::array<HandPart, 17> hand_parts = {
-        { { "W_L", 0, { { 0.42f, 0.375f }, { 0.15f, 0.45f }, LEFT } },
+        { { "W_LAT", 0, { { 0.42f, 0.375f }, { 0.15f, 0.45f }, LEFT } },
          { "W_LNG", 1, { { 0.5485f, 0.375f }, { 0.85f, 0.45f }, RIGHT }, true },
 
          { "T_PROX", 2, { { 0.3f, 0.3f }, { 0.15f, 0.3f }, LEFT }, true },
