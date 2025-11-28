@@ -1,3 +1,4 @@
+#include <format>
 #include <vector>
 
 #include <BLEManager.h>
@@ -5,21 +6,30 @@
 #include <Logger.h>
 #include <Statics.h>
 
-BLEManager::~BLEManager() {
-    has_to_finish = true;
-    std::stringstream last_message;
+void BLEManager::shutdown() {
+    has_to_shutdown = true;
+    std::string last_message = "\n\tLast message from BLEManager:\n";
 
-    last_message << "\n\tLast message from BLEManager:\n";
+    try {
+        if (adapter.scan_is_active()) {
+            adapter.scan_stop();
+            last_message += "\t\tBLE Scanning stopped";
+        }
+    } catch (const std::exception& e) {
+        last_message += std::format("\t\tscan_stop() threw: {}", e.what());
+    }
+
     if (finder_thread.joinable()) {
         finder_thread.join();
-        last_message << "\t\tfinder_thread threads finished successfully";
+        last_message += "\n\t\tfinder_thread finished successfully";
     }
 
     if (hand_learner.initialized() && hand_learner.is_connected()) {
         hand_learner.disconnect();
-        last_message << "\n\t\tDisconnected successfully from: " + hand_learner.identifier();
+        last_message += std::format("\n\t\tDisconnected successfully from: {}", hand_learner.identifier());
     }
-    LOG(logger::LOG_INFO, last_message.str());
+
+    LOG(logger::LOG_INFO, last_message);
 }
 
 void BLEManager::initiate(const SimpleBLE::Adapter& given_adapter) {
@@ -43,9 +53,8 @@ void BLEManager::setup_device_callbacks() {
 
     hand_learner.set_callback_on_disconnected([this]() {
         LOG(logger::LOG_WARNING, "Device disconnected...");
-        if (!has_to_finish) {
+        if (!has_to_shutdown) {
             LOG(logger::LOG_WARNING, "Starting finder thread...");
-
             find_hand_learner();
         }
     });
@@ -57,48 +66,61 @@ void BLEManager::find_hand_learner() {
     }
 
     finder_thread = std::thread([this]() {
-        while (!has_to_finish) {
-            adapter.scan_for(SCAN_FOR);
+        while (!has_to_shutdown) {
+            try {
+                adapter.scan_for(SCAN_FOR);
+            } catch (const std::exception& e) {
+                LOG(logger::LOG_ERR, std::format("scan_for() threw: {}", e.what()));
+            }
 
             for (auto& peripheral : adapter.scan_get_results()) {
                 if (peripheral.address() == HAND_LEARNER_ADDRESS || peripheral.identifier() == HAND_LEARNER_IDENTIFIER) {
                     std::lock_guard<std::mutex> lock(worker_mutex);
-                    std::stringstream ss;
-                    hand_learner = peripheral;
-                    ss << "\n\tFound Hand Learner:" << "\n\t\tAddress: " << hand_learner.address()
-                       << "\n\t\tIdentifier: " << hand_learner.identifier() << "\n\t\tIs connectable: " << hand_learner.is_connectable()
-                       << "\n\t\tSignal strength: " << hand_learner.rssi();
 
-                    LOG(logger::LOG_INFO, ss.str());
-                    ss.str(std::string());
+                    hand_learner = peripheral;
+
+                    std::string msg = std::format("\n\tFound Hand Learner:\n"
+                                                  "\t\tAddress: {}\n"
+                                                  "\t\tIdentifier: {}\n"
+                                                  "\t\tIs connectable: {}\n"
+                                                  "\t\tSignal strength: {}",
+                                                  hand_learner.address(),
+                                                  hand_learner.identifier(),
+                                                  hand_learner.is_connectable(),
+                                                  hand_learner.rssi());
+
+                    LOG(logger::LOG_INFO, msg);
 
                     if (hand_learner.is_connectable()) {
                         hand_learner.connect();
 
-                        ss << "\n\tConnected successfully to: " << peripheral.identifier() << "\n\t\tMTU: " << hand_learner.mtu();
+                        msg.clear();
+                        msg = std::format("\n\tConnected successfully to: {}\n\t\tMTU: {}", peripheral.identifier(), hand_learner.mtu());
+
                         for (auto& service : hand_learner.services()) {
-                            ss << "\n\t\tService: " << service.uuid();
+                            msg += std::format("\n\t\tService: {}", service.uuid());
 
                             for (auto& characteristic : service.characteristics()) {
-                                ss << "\n\t\t\tCharacteristic: " << characteristic.uuid() << "\n\t\t\t\tCapabilities: ";
+                                msg += std::format("\n\t\t\tCharacteristic: {}\n\t\t\t\tCapabilities: ", characteristic.uuid());
 
                                 for (auto& capability : characteristic.capabilities())
-                                    ss << capability << " ";
+                                    msg += std::format("{} ", capability);
 
                                 for (auto& descriptor : characteristic.descriptors())
-                                    ss << "\n\t\t\t\tDescriptor: " << descriptor.uuid();
+                                    msg += std::format("\n\t\t\t\tDescriptor: {}", descriptor.uuid());
 
                                 if (characteristic.uuid() == CHARACTERISTIC_UUID && service.uuid() == SERVICE_UUID) {
                                     setup_device_callbacks();
 
-                                    ss << "\n\tFound the needed service.";
-                                    LOG(logger::LOG_INFO, ss.str());
+                                    msg += "\n\tFound the needed service.";
+                                    LOG(logger::LOG_INFO, msg);
                                     return;
                                 }
                             }
                         }
-                        ss << "\n\tDesired service was not found.";
-                        LOG(logger::LOG_INFO, ss.str());
+
+                        msg += "\n\tDesired service was not found.";
+                        LOG(logger::LOG_INFO, msg);
                     }
 
                     return;

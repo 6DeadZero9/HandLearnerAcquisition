@@ -1,4 +1,5 @@
 #include <cmath>
+#include <format>
 #include <iomanip>
 
 #include <raygui.h>
@@ -46,15 +47,28 @@ void ArmStatistics::draw(int window_width, int window_height, float window_to_sc
     img_box.y += box_height * ARM_IMAGE_BOX_PADDING_SCALE;
     img_box.height -= box_height * (ARM_IMAGE_BOX_PADDING_SCALE * 2);
 
-    std::ostringstream general_data_output;
-    general_data_output << "ACCEL_DATA:"
-                        << "\n\tX:" << std::fixed << std::setprecision(2) << general_data.accel_data.x << "\n\tY:" << std::fixed
-                        << std::setprecision(2) << general_data.accel_data.y << "\n\tZ:" << std::fixed << std::setprecision(2)
-                        << general_data.accel_data.z << "\n\nGYRO_DATA:" << "\n\tX:" << std::fixed << std::setprecision(2)
-                        << general_data.gyro_data.x << "\n\tY:" << std::fixed << std::setprecision(2) << general_data.gyro_data.y
-                        << "\n\tZ:" << std::fixed << std::setprecision(2) << general_data.gyro_data.z << "\n\nIMU_TEMP: " << std::fixed
-                        << std::setprecision(2) << general_data.temp_data << "°C" << "\n\nFPS: " << GetFPS();
-    Vector2 general_data_output_text_size = MeasureTextEx(font, general_data_output.str().c_str(), statistics_text_size, 1);
+    // --- general_data_output (REPLACED ostringstream WITH std::format) ---
+    std::string general_data_output = std::format("ACCEL_DATA:\n"
+                                                  "\tX:{:.2f}\n"
+                                                  "\tY:{:.2f}\n"
+                                                  "\tZ:{:.2f}\n\n"
+                                                  "GYRO_DATA:\n"
+                                                  "\tX:{:.2f}\n"
+                                                  "\tY:{:.2f}\n"
+                                                  "\tZ:{:.2f}\n\n"
+                                                  "IMU_TEMP: {:.2f}°C\n\n"
+                                                  "FPS: {}",
+                                                  general_data.accel_data.x,
+                                                  general_data.accel_data.y,
+                                                  general_data.accel_data.z,
+                                                  general_data.gyro_data.x,
+                                                  general_data.gyro_data.y,
+                                                  general_data.gyro_data.z,
+                                                  general_data.temp_data,
+                                                  GetFPS());
+
+    Vector2 general_data_output_text_size = MeasureTextEx(font, general_data_output.c_str(), statistics_text_size, 1);
+
     Rectangle general_statistics_box { arm_statistics_box.x + arm_statistics_box.width * GENERAL_STATISTICS_X_TEST_POSITION_OFFSET,
                                        arm_statistics_box.y + arm_statistics_box.height -
                                            (arm_statistics_box.height * GENERAL_STATISTICS_Y_TEST_POSITION_OFFSET +
@@ -64,12 +78,9 @@ void ArmStatistics::draw(int window_width, int window_height, float window_to_sc
 
     GuiGroupBox(arm_statistics_box, "Arm Statistics");
     DrawTexturePro(arm_image, { 0, 0, (float)arm_image.width, (float)arm_image.height }, img_box, { 0, 0 }, 0, WHITE);
-    DrawTextEx(font,
-               general_data_output.str().c_str(),
-               { general_statistics_box.x, general_statistics_box.y },
-               statistics_text_size,
-               1,
-               outlines_color);
+
+    DrawTextEx(
+        font, general_data_output.c_str(), { general_statistics_box.x, general_statistics_box.y }, statistics_text_size, 1, outlines_color);
 
     // --- Expand text border ---
     general_statistics_box.x -= general_data_output_text_size.x * GENERAL_STATISTICS_X_PADDING;
@@ -79,11 +90,9 @@ void ArmStatistics::draw(int window_width, int window_height, float window_to_sc
 
     DrawRectangleLinesEx(general_statistics_box, line_thickness, outlines_color);
 
-    // --- Helper: format raw_angle ---
+    // --- format_angle (REPLACED ostringstream WITH std::format) ---
     auto format_angle = [](float radians) {
-        std::ostringstream ss;
-        ss << std::fixed << std::setprecision(2) << radians * (180.0f / M_PI);
-        return ss.str();
+        return std::format("{:.2f}", radians * DEG2RAD);
     };
 
     // --- Helper: draw connectors ---
@@ -112,8 +121,12 @@ void ArmStatistics::draw(int window_width, int window_height, float window_to_sc
     // --- Loop through hand parts ---
     for (const auto& hand_part : HAND_INSTANCE) {
         float rect_size = MIN_RECTANGLE_POINTER_SIZE + MAX_RECTANGLE_POINTER_SIZE * window_to_screen_ratio;
+
         GUIData gui = hand_part.get_gui_data();
-        std::string display_text = hand_part.get_name() + ": " + format_angle(hand_part.get_angle(true)) + "°";
+
+        // REPLACED stringstream with std::format
+        std::string display_text = std::format("{}: {}°", hand_part.get_name(), format_angle(hand_part.get_angle(true)));
+
         Vector2 text_size = MeasureTextEx(font, display_text.c_str(), statistics_text_size, 1);
 
         // --- Joint rectangle ---
@@ -131,17 +144,15 @@ void ArmStatistics::draw(int window_width, int window_height, float window_to_sc
         // --- Draw text ---
         DrawTextEx(font, display_text.c_str(), { text_box.x, text_box.y }, statistics_text_size, 1, outlines_color);
 
-        // --- Expand text box border ---
+        // --- Expand text border ---
         text_box.x -= text_size.x * ANGLE_TEXT_BOX_X_PADDING;
         text_box.y -= text_size.y * ANGLE_TEXT_BOX_Y_PADDING;
         text_box.width += text_size.x * (ANGLE_TEXT_BOX_X_PADDING * 2);
         text_box.height += text_size.y * (ANGLE_TEXT_BOX_Y_PADDING * 2);
 
-        // --- Draw boxes ---
         DrawRectangleLinesEx(joint_box, line_thickness, outlines_color);
         DrawRectangleLinesEx(text_box, line_thickness, outlines_color);
 
-        // --- Draw connector ---
         draw_connector(gui.alignment == LEFT, joint_box, text_box);
     }
 }

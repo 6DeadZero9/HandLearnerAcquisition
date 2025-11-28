@@ -13,16 +13,17 @@ class BLEManager : public Singleton<BLEManager> {
     friend class Singleton<BLEManager>;
 
 public:
-    ~BLEManager();
+    ~BLEManager() = default;
 
     void initiate(const SimpleBLE::Adapter& given_adapter);
     void find_hand_learner();
     void setup_device_callbacks();
+    void shutdown();
 
 private:
-    bool has_to_finish = false;
     std::mutex worker_mutex;
     std::thread finder_thread;
+    bool has_to_shutdown = false;
 
     SimpleBLE::Adapter adapter;
     SimpleBLE::Peripheral hand_learner;

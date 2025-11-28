@@ -1,3 +1,5 @@
+#include <format>
+
 #include <Hand.h>
 #include <Logger.h>
 #include <Tools.h>
@@ -27,13 +29,12 @@ void Hand::state_update(DataContainer& container) {
 
 std::string Hand::print() {
     std::lock_guard<std::mutex> lock(hand_usage_mutex);
-    std::stringstream ss;
 
-    ss << "\n\tHAND:";
+    std::string out = "\n\tHAND:";
     for (auto& hand_part : hand_parts) {
-        ss << hand_part.print();
+        out += hand_part.print();
     }
-    ss << std::endl;
+    out += "\n";
 
-    return ss.str();
+    return out;
 }

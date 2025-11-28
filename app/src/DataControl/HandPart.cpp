@@ -1,6 +1,7 @@
 #define _USE_MATH_DEFINES
 
 #include <cmath>
+#include <format>
 
 #include <HandPart.h>
 #include <Tools.h>
@@ -19,10 +20,10 @@ void HandPart::update(const DataContainer& container) {
 }
 
 std::string HandPart::print() {
-    std::stringstream ss;
-
-    ss << "\n\t\t" << name << ":"
-       << "\n\t\t\tIndex: " << static_cast<int>(index) << "\n\t\t\tAngle: " << raw_angle * (180 / M_PI) << "°";
-
-    return ss.str();
+    return std::format("\n\t\t{}:"
+                       "\n\t\t\tIndex: {}"
+                       "\n\t\t\tAngle: {:.2f}°",
+                       name,
+                       static_cast<int>(index),
+                       raw_angle * DEG2RAD);
 }

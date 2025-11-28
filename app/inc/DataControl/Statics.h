@@ -47,6 +47,13 @@ constexpr int BEFORE_ZOOM_SIZE { 150 };
 constexpr int ZOOM_SIZE { 400 };
 constexpr float ZOOM_SIZE_EXPANSION { 1.05f };
 
+// 3D Visualization box values
+
+constexpr float _3D_VISUALIZATION_X_OFFSET { 0.32f };
+constexpr float _3D_VISUALIZATION_Y_OFFSET { 0.02f };
+constexpr float _3D_VISUALIZATION_WIDTH_SCALE { 0.671f };
+constexpr float _3D_VISUALIZATION_HEIGHT_SCALE { 0.97f };
+
 // Arm Statistics box values
 
 constexpr int MIN_ARM_STATISTICS_TEXT_SIZE { 10 };

@@ -18,10 +18,12 @@
 #include <Statics.h>
 #include <Tools.h>
 
-void signalHandler(int32_t signal) {
-    LOG(logger::LOG_CRIT, "Got an interrupt signal: %d", signal);
+int return_signal = EXIT_SUCCESS;
+static std::atomic_bool g_terminate { false };
 
-    exit(signal);
+void signalHandler(int signal) {
+    return_signal = signal;
+    g_terminate.store(true, std::memory_order_relaxed);
 }
 
 void setupSignalHandlers() {
@@ -29,7 +31,7 @@ void setupSignalHandlers() {
 
     sa.sa_handler = signalHandler;
     sigemptyset(&sa.sa_mask);
-    sa.sa_flags = SA_RESTART;
+    sa.sa_flags = 0;
 
     // intercept fault signals
     sigaction(SIGINT, &sa, nullptr);
@@ -65,10 +67,7 @@ int main() {
     InitWindow(0, 0, "Hand Learner Visualization");
     SetTargetFPS(144);
 
-    int window_width = GetScreenWidth();
-    int window_height = GetScreenHeight();
-
-    SetWindowSize(window_width / 2, window_height / 2);
+    SetWindowSize(GetScreenWidth() / 2, GetScreenHeight() / 2);
 
     auto adapter_optional = tools::getAdapter();
 
@@ -80,12 +79,17 @@ int main() {
     BLE_MANAGER_INSTANCE.initiate(adapter_optional.value());
     BLE_MANAGER_INSTANCE.find_hand_learner();
 
-    while (!WindowShouldClose()) {
+    while (!WindowShouldClose() && !g_terminate.load()) {
         APP_INSTANCE.poll_input();
         APP_INSTANCE.update();
     }
 
+    if (g_terminate.load()) {
+        LOG(logger::LOG_INFO, std::format("Signal received: {}, starting clean shutdown...", return_signal));
+    }
+
+    BLE_MANAGER_INSTANCE.shutdown();
     CloseWindow();
 
-    return EXIT_SUCCESS;
+    return return_signal;
 }

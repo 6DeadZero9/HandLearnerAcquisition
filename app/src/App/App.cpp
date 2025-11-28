@@ -2,6 +2,7 @@
 
 #include <raygui.h>
 
+#include <_3DVisualization.h>
 #include <App.h>
 #include <ArmStatistics.h>
 #include <Logger.h>
@@ -10,6 +11,8 @@
 App::App() {
     components.emplace_back(std::make_unique<ArmStatistics>(
         ARM_STATISTICS_X_OFFSET, ARM_STATISTICS_Y_OFFSET, ARM_STATISTICS_WIDTH_SCALE, ARM_STATISTICS_HEIGHT_SCALE));
+    components.emplace_back(std::make_unique<_3DVisualization>(
+        _3D_VISUALIZATION_X_OFFSET, _3D_VISUALIZATION_Y_OFFSET, _3D_VISUALIZATION_WIDTH_SCALE, _3D_VISUALIZATION_HEIGHT_SCALE));
 
     register_key_callback(KEY_F, [this]() {
         if (!IsWindowFullscreen()) {
